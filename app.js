@@ -1,14 +1,16 @@
 const express = require('express');
-const alphabeta = require('./alphabeta');
+const static = require('serve-static')
 
+const alphabeta = require('./alphabeta');
 const app = express();
 
-app.get('/alphabeta/:session/:input', async (req, res) => {
+app.use(static('assets', {'index': 'index.html'}));
+
+app.get('/alphabeta/:session', async (req, res) => {
   try {
-    const alphabetaResult = await Promise.race([
-      new Promise((resolve) => setTimeout(resolve, 3000, alphabeta.Consts.RequestTimedOut)),
-      alphabeta.calculate(req.params.session, req.params.input)
-    ]);
+    const alphabetaResult = 
+      await alphabeta.calculate(req.params.session, req.query.input, 3000);
+
     if (alphabetaResult === alphabeta.Consts.RequestTimedOut) {
       res.status(202).end();
     } else if (alphabetaResult === alphabeta.Consts.RequestOutdated) {

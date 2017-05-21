@@ -9,6 +9,7 @@
   "author": "Remi Orlowski",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "serve-static": "^1.12.3"
   }
 }

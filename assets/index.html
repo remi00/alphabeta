@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AlphaBeta plain simple demo</title>
+  <link rel="stylesheet" href="https://gitcdn.link/repo/Chalarangelo/mini.css/v2.2.0/dist/mini-default.min.css">
+  <script async src="https://unpkg.com/vue@2.3.3"></script>
+  <script async src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style>
+.label-aligned {
+  align-items: center;
+}
+.progress, .result {
+  display: inline-block;
+}
+.result {
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+  <h1>AlphaBeta Demo
+    <small>Handling long-lasting backend processing with plain HTTP</small></h1>
+
+<div id="app">
+<form>
+  <fieldset>
+    <legend>Sessions requests</legend>
+    <div class="row label-aligned" v-for="item in requests">
+      <div class="col-sm-12 col-md-1">
+        <label :for="item.name">{{ item.label }}</label>
+      </div>
+      <div class="col-sm-12 col-md">
+        <input type="text" v-model="item.input">
+        <input type="button" class="primary" @click="sendRequest(item)" value="Send &raquo;">
+        <span v-if="item.processing" class="progress">...</span>
+        <span v-if="item.result" class="result">{{ item.result }}</span>
+      </div>
+    </div>
+  </fieldset>
+</form>
+</div>
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    requests: [
+      { name: 'foo', label: 'Foo', input: 'barrrracudddaverylonginputdatahere', processing: false, result: null},
+      { name: 'cafe', label: 'Cafe', input: 'babe', processing: false, result: null},
+      { name: 'other', label: 'Other', input: '12345', processing: false, result: null}
+    ]
+  },
+  methods: {
+    async sendRequest(item) {
+      item.processing = true;
+      res = await axios.get(`/alphabeta/${item.name}?input=${item.input}`);
+      item.processing = false;
+      if (res.status === 202) {
+          item.result = 'not ready. try again...';
+      } else if (res.status === 200) {
+          item.result = res.data.result;
+      }
+    }
+  }
+})
+</script>
+
+</body>
+</html>
