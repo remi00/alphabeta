@@ -1,26 +1,28 @@
+
 const Consts = {
   RequestTimedOut: 'request_timedout',
   RequestOutdated: 'request_outdated',
 };
 
-const processingWorkflow = [
+const makeCalculate = (operation) =>
+  (input) =>
+    new Promise((resolve) => setTimeout(resolve, 20 * input.length, `${operation}(${input})`));
+
+const workflow = [
   makeCalculate('Alpha'),
   makeCalculate('Beta'),
   makeCalculate('Gamma'),
-  makeCalculate('Delta'),
+  makeCalculate('Delta')
   // ...
 ]
 
 const processingMap = {};
 
-const makeCalculate = (operation) => (input) => {
-  return new Promise(resolve => setTimeout(resolve, Math.random() * 1000, `${operation}(${input})`));
-};
-
 const calculateAlphaBeta = async (processing, input) => {
-  const result = input;
-  for (let processStep of processingWorkflow) {
-    result = await processStep(result);
+  let result = input;
+  for (let step of workflow) {
+    result = await step(result);
+    console.log(processing, input)
     if (processing.input !== input) {
       return Consts.RequestOutdated;
     }
@@ -28,30 +30,24 @@ const calculateAlphaBeta = async (processing, input) => {
   return result;
 };
   
+const calculatePerSessionInput = (sessionId, input) => {
+  // establish a session if not existing yet
+  if (!processingMap[sessionId]) {
+    processingMap[sessionId] = { input };
+  }
 
-const alphaBetaPerSessionInput = (sessionId, input) => {
   const processing = processingMap[sessionId];
-  if (processing && processing.result && processing.input === input) {
-    console.info(`Request for ${sessionId}: Existing promise for the same request is there`);
+  if (processing.result && processing.input === input) {
+    console.info(`[${sessionId}]: Existing promise for the same request is there`);
   } else {
-    console.info(`Request for ${sessionId}: New input parameters, making new processing`);
+    console.info(`[${sessionId}]: New input parameters, making new processing`);
     processing.input = input;
     processing.result = calculateAlphaBeta(processing, input);
   }
-  return track.tweenframes;
+  return processing.result;
 };
 
-app.get('/alphabeta/:session/:input', async () => {
-  const alphabetaResult = 
-    Promise.race(
-      new Promise((resolve) => setTimeout(resolve, 9000, Consts.RequestTimedOut)),
-      alphaBetaPerSessionInput(res.params.session, res.params.input)
-    );
-  if (alphabetaResult === Consts.RequestTimedOut) {
-    res.status(202).end();
-  } else if (alphabetaResult === Consts.RequestOutdated) {
-    res.status(205).end();
-  } else {
-    res.json({ session: res.params.session, input: res.params.input, result: alphabetaResult });
-  }
-});
+module.exports = {
+  Consts,
+  calculate: calculatePerSessionInput,
+};

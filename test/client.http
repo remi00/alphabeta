@@ -1,0 +1,12 @@
+
+GET http://localhost:53434/alphabeta/cafe/babe
+
+###
+
+GET http://localhost:53434/alphabeta/foo/b
+
+
+###
+
+GET http://localhost:53434/alphabeta/foo/barrrrracudaverylongrequesthere
+
