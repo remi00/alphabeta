@@ -22,7 +22,7 @@
 
 <body>
   <h1>AlphaBeta Demo
-    <small>Handling long-lasting backend processing with plain HTTP</small></h1>
+    <small>Handling long-lasting backend processing with just an HTTP</small></h1>
 
 <div id="app">
 <form>
@@ -35,7 +35,7 @@
       <div class="col-sm-12 col-md">
         <input type="text" v-model="item.input">
         <input type="button" class="primary" @click="sendRequest(item)" value="Send &raquo;">
-        <span v-if="item.processing" class="progress">...</span>
+        <span v-if="item.processing" class="progress"><img src="/spinner.gif" alt="loading..." /></span>
         <span v-if="item.result" class="result">{{ item.result }}</span>
       </div>
     </div>
@@ -47,9 +47,9 @@ var app = new Vue({
   el: '#app',
   data: {
     requests: [
-      { name: 'foo', label: 'Foo', input: 'barrrracudddaverylonginputdatahere', processing: false, result: null},
       { name: 'cafe', label: 'Cafe', input: 'babe', processing: false, result: null},
-      { name: 'other', label: 'Other', input: '12345', processing: false, result: null}
+      { name: 'foo', label: 'Foo', input: 'barrrracudddaverylonginputdatahere', processing: false, result: null},
+      { name: 'other', label: 'Other', input: '12345', processing: false, result: null},
     ]
   },
   methods: {
