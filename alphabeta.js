@@ -1,3 +1,11 @@
+// response codes when not an actual result is to be returned
+const Consts = {
+  RequestTimedOut: 'request_timedout',
+  RequestOutdated: 'request_outdated',
+};
+
+// map of the "sessions"  or "subject-matters" to a processing data, including processing promise
+const processingMap = {};
 
 // workflow is just a mock pretendending long-lasting processing
 
@@ -12,16 +20,6 @@ const workflow = [
   makeCalculate('Delta')
   // ...
 ];
-
-
-// response codes when not an actual result is to be returned
-const Consts = {
-  RequestTimedOut: 'request_timedout',
-  RequestOutdated: 'request_outdated',
-};
-
-// map of the "sessions"  or "subject-matters" to a processing data, including processing promise
-const processingMap = {};
 
 
 // our long lasting calculation
@@ -61,7 +59,7 @@ const calculatePerSessionInput = (sessionId, input) => {
 const calculate = (sessionId, input, timeout) =>
   // guard the calculation with the timeout
   Promise.race([
-    new Promise((resolve) => setTimeout(resolve, 3000, Consts.RequestTimedOut)),
+    new Promise((resolve) => setTimeout(resolve, timeout, Consts.RequestTimedOut)),
     calculatePerSessionInput(sessionId, input)
   ]);
 
