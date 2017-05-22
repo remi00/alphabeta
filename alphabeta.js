@@ -1,10 +1,5 @@
 
-const Consts = {
-  RequestTimedOut: 'request_timedout',
-  RequestOutdated: 'request_outdated',
-};
-
-const processingMap = {};
+// workflow is just a mock pretendending long-lasting processing
 
 const makeCalculate = (operation) =>
   (input) =>
@@ -16,13 +11,26 @@ const workflow = [
   makeCalculate('Gamma'),
   makeCalculate('Delta')
   // ...
-]
+];
 
 
+// response codes when not an actual result is to be returned
+const Consts = {
+  RequestTimedOut: 'request_timedout',
+  RequestOutdated: 'request_outdated',
+};
+
+// map of the "sessions"  or "subject-matters" to a processing data, including processing promise
+const processingMap = {};
+
+
+// our long lasting calculation
 const calculateAlphaBeta = async (processing, input) => {
   let result = input;
   for (let step of workflow) {
     result = await step(result);
+    // after each discrete step - check if this processing still makes sense
+    // ie. no other request with other input?
     if (processing.input !== input) {
       return Consts.RequestOutdated;
     }
@@ -31,7 +39,7 @@ const calculateAlphaBeta = async (processing, input) => {
 };
   
 const calculatePerSessionInput = (sessionId, input) => {
-  // establish a session if not existing yet
+  // establish a "session" unless it exists
   if (!processingMap[sessionId]) {
     processingMap[sessionId] = { input };
   }
@@ -50,7 +58,8 @@ const calculatePerSessionInput = (sessionId, input) => {
 };
 
 
-const calculate = (sessionId, input, delay) =>
+const calculate = (sessionId, input, timeout) =>
+  // guard the calculation with the timeout
   Promise.race([
     new Promise((resolve) => setTimeout(resolve, 3000, Consts.RequestTimedOut)),
     calculatePerSessionInput(sessionId, input)

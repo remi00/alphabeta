@@ -24,9 +24,19 @@ Pattern used here is based on HTTP and JS promises managed in an elegant way.
   * While processing a request for particular session S, there are can happen several situations that will be handled:
     1. Request will be processed within the time T - HTTP 200 with a result
     1. Request will not be processed within time T (exceeding the timeout) - HTTP 202 - Request accepted but not processed. In such case, if the same request will be sent by the client, the same promise will handle the response. Again, either 202 or 200 is possible.
-    1. During processing the request, another request comes for the same session. Once that is detected, HTTP 205 is sent for "old" request, with a termination of further processing. CPU is therefore freed to handle new request.
+    1. During processing the request, another request for the same session may come. Once that is detected (between the "steps" of processing), HTTP 205 is sent for "old" request, with a termination of further processing. CPU is therefore freed to handle new request.
 
 Thanks to promises and asynchornous nature of JS runtime:
   * Sequence of events (incoming requests process order etc.) can be assumed.
   * Handling the timeout is plain simple (Promise.race with actual processing).
   * Although relatively fine-grain http-based solution is defined, the code is plain simple in the construction and analysis.
+
+## Installation 
+
+**Please use recent nodejs version (v7.8.0 or newer), as the sourcecode uses async/await.**
+
+```bash
+npm install # install dependencies (express actually)
+
+node app.js # run
+```

@@ -4,8 +4,11 @@ const static = require('serve-static')
 const alphabeta = require('./alphabeta');
 const app = express();
 
+// serve the demo client app
 app.use(static('assets', {'index': 'index.html'}));
 
+
+// one and only endpoint to serve "long-lasting" processing capability
 app.get('/alphabeta/:session', async (req, res) => {
   try {
     const alphabetaResult = 
@@ -29,5 +32,5 @@ app.get('/alphabeta/:session', async (req, res) => {
 
 const port = 53434;
 app.listen(port, () => {
-  console.log(`Alphabeta calculator server running: http://localhost:${port}`);
+  console.log(`Alphabeta calculator server running.\r\nYou can open http://localhost:${port} to play around with the demo.`);
 });
